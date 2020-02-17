@@ -2,7 +2,7 @@ spring:
   datasource:
     username: root
     password:
-    url: jdbc:mysql://localhost:3306/mybatis?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/fleaMarket?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
@@ -10,3 +10,16 @@ spring:
     minIdle: 5
     maxWait: 6000
     maxActive: 20
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  global-config:
+    refresh-mapper: true
+    #驼峰下划线转换
+    column-underline: true
+    configuration:
+
