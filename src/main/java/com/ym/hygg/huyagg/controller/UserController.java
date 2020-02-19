@@ -23,9 +23,7 @@ public class UserController {
     @PostMapping("/save")
     public User create(@RequestBody User user){
         System.out.println(user);
-        int ram = (int)((Math.random()*100));
         long timeMillis = System.currentTimeMillis();
-        user.setUid(timeMillis + ram);
         System.out.println(new Date(timeMillis));
         user.setCreateTime(new Date(timeMillis));
         int i =  userService.save(user);
