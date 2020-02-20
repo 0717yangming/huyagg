@@ -13,14 +13,14 @@ import java.util.Date;
 public class UserController {
     @Autowired
     private UserService userService;
-    @GetMapping("/getUserById/{uid}")
+    @GetMapping("/{uid}")
     public User getUserById(@PathVariable Long uid){
         System.out.println(uid);
         User user = userService.getUserById(uid);
         System.out.println(user.getCreateTime());
         return  user;
     }
-    @PostMapping("/save")
+    @PostMapping
     public User create(@RequestBody User user){
         System.out.println(user);
         long timeMillis = System.currentTimeMillis();

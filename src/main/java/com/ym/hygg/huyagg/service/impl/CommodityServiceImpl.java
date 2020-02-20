@@ -32,4 +32,14 @@ public class CommodityServiceImpl implements CommodityService {
     public int update(Commodity commodity) {
         return commodityMapper.updateByExample(commodity);
     }
+
+    @Override
+    public Commodity getCommodityById(Integer id) {
+        return commodityMapper.GetCommodityById(id);
+    }
+
+    @Override
+    public List<Commodity> getCommoditiesByType(Integer classify) {
+        return commodityMapper.getCommoditiesByType(classify);
+    }
 }
