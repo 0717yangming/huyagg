@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ym.hygg.huyagg.mapper.UserMapper">
    <insert id="save" parameterType="com.ym.hygg.huyagg.pojo.User">
-       INSERT INTO user(academy,banji,create_time,domitory,email,major,name,password,phone,reputation,sex,state,who)
-        VALUES (#{academy},#{banji},#{createTime},#{domitory},#{email},#{major},#{name},
+       INSERT INTO user(academy,banji,create_time,domitory,email,major,name,actual_name,password,phone,reputation,sex,state,who)
+        VALUES (#{academy},#{banji},#{createTime},#{domitory},#{email},#{major},#{name},#{actualName}
         #{password},#{phone},#{reputation},#{sex},#{state},#{who}
        )
    </insert>

@@ -1,8 +1,11 @@
 package com.ym.hygg.huyagg.controller;
 
+import com.ym.hygg.huyagg.annotation.PassToken;
+import com.ym.hygg.huyagg.annotation.UserLoginToken;
 import com.ym.hygg.huyagg.pojo.Commodity;
 import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.service.CommodityService;
+import com.ym.hygg.huyagg.utils.ImageUploadUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +28,13 @@ import java.util.*;
 public class CommodityController {
     @Autowired
     private CommodityService commodityService;
-
+    @PassToken
     @GetMapping
     public List<Commodity> queryAll(){
         System.out.println("访问了allCommodities");
         return commodityService.queryAllCommodity();
     }
+    @PassToken
     @GetMapping("/{id}")
     public Commodity getCommodityById(@PathVariable Integer id){
         return commodityService.getCommodityById(id);
@@ -39,21 +43,46 @@ public class CommodityController {
     public List<Commodity> getCommoditiesByType(@PathVariable Integer id){
         return commodityService.getCommoditiesByType(id);
     }
+    @UserLoginToken
     @PostMapping
-    public ResponseObject save(@RequestBody @NotNull Commodity commodity){
+    public Map<String,Object> save(@NotNull Commodity commodity,@RequestParam("image") MultipartFile multipartFile){
         commodity.setAddTime(new Date(System.currentTimeMillis()));
-        System.out.println("添加"+commodity);
+        Map<String,Object> map = null;
+        if(multipartFile.getSize() > 0){
+            map = ImageUploadUtils.uploadImage(multipartFile);
+        String imageName = (String)map.get("newName");
+        commodity.setPicName(imageName);
+        }
        int i = commodityService.save(commodity);
+        if(i > 0){
+            map.put("code",200);
+        }else {
+            map.put("code",301);
+        }
+        System.out.println("添加"+commodity);
         System.out.println("添加了"+i+"件商品");
-        return new ResponseObject(200,"添加成功");
+        return map;
     }
+    @UserLoginToken
     @PutMapping
-    public ResponseObject update(@RequestBody Commodity commodity){
+    public Map<String, Object> update(@RequestBody Commodity commodity, @RequestParam("image") MultipartFile multipartFile){
+        Map<String,Object> map = null;
+        if(multipartFile.getSize() > 0){
+            map = ImageUploadUtils.uploadImage(multipartFile);
+            String imageName = (String)map.get("newName");
+            commodity.setPicName(imageName);
+        }
         System.out.println("修改"+commodity);
         int i = commodityService.update(commodity);
+        if(i > 0){
+            map.put("code",200);
+        }else {
+            map.put("code",301);
+        }
         System.out.println("修改了"+i+"条记录");
-        return new ResponseObject(200,"修改成功");
+        return map;
     }
+    @UserLoginToken
     @DeleteMapping("/{id}")
     public ResponseObject delete(@PathVariable Integer id){
         int i = commodityService.delete(id);
@@ -62,6 +91,7 @@ public class CommodityController {
     /*
     图片上传
      */
+    @UserLoginToken
     @PostMapping("/upload")
     public Map<String, Object> upload(@RequestParam("fileName")MultipartFile file){
         String result_msg = "";
@@ -99,6 +129,7 @@ public class CommodityController {
              root.put("result_msg",result_msg);
             return root;
     }
+    @UserLoginToken
     @PostMapping("/image")
     public Map<String,Object> singleFileUpload(@RequestParam("image") MultipartFile file) {
             Map<String,Object> map = new HashMap<>();

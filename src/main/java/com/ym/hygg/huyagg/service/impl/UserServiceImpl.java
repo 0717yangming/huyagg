@@ -19,4 +19,9 @@ public class UserServiceImpl implements UserService {
     public int save(User user) {
         return userMapper.save(user);
     }
+
+    @Override
+    public User getUserByNameAndPassword(String username, String password) {
+        return userMapper.getUserByNameAndPassword(username,password);
+    }
 }

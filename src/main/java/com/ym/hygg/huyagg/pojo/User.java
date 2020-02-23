@@ -15,7 +15,7 @@ import java.util.Date;
 @Entity(name = "user")
 public class User {
     @Id
-    private Long uid;
+    private Integer uid;
 
     @NotNull
     private String academy;
@@ -23,7 +23,8 @@ public class User {
     private String email;
     private String domitory;
     private String major;
-    private String name;
+    private String username;
+    private String actualName;
     private String password;
     private String phone;
     private String sex;
