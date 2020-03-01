@@ -6,6 +6,7 @@ import com.ym.hygg.huyagg.pojo.Commodity;
 import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.service.CommodityService;
 import com.ym.hygg.huyagg.utils.ImageUploadUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/commodity")
@@ -31,7 +33,7 @@ public class CommodityController {
     @PassToken
     @GetMapping
     public List<Commodity> queryAll(){
-        System.out.println("访问了allCommodities");
+       log.info("获取所有商品");
         return commodityService.queryAllCommodity();
     }
     @PassToken
