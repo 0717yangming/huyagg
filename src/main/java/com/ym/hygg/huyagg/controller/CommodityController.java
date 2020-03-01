@@ -88,7 +88,7 @@ public class CommodityController {
     @DeleteMapping("/{id}")
     public ResponseObject delete(@PathVariable Integer id){
         int i = commodityService.delete(id);
-        return new ResponseObject(200,"删除成功");
+        return new ResponseObject(200,"删除成功",null);
     }
     /*
     图片上传

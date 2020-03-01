@@ -11,7 +11,7 @@ public interface UserMapper {
     @Select("SELECT * FROM user")
     List<User> getAllUser();
     @Select("SELECT * FROM user WHERE uid = #{uid}")
-    User getUserByUId(Long uid);
+    User getUserByUId(Integer uid);
     int save(User user);
     @Select("SELECT * FROM user WHERE username = #{username} and password = #{password}")
     User getUserByNameAndPassword(String username,String password);

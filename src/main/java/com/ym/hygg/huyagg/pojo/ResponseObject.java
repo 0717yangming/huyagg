@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 public class ResponseObject {
     private Integer code;
     private String msg;
+    private Object object;
+    public static final Integer SUCCESS = 200;
+    public static final Integer Fail = 404;
 }

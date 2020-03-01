@@ -1,5 +1,6 @@
 package com.ym.hygg.huyagg.controller;
 
+import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.TokenService;
 import com.ym.hygg.huyagg.service.UserService;
@@ -18,12 +19,26 @@ public class UserController {
     private UserService userService;
     @Autowired
     private TokenService tokenService;
+
     @GetMapping("/{uid}")
-    public User getUserById(@PathVariable Long uid){
+    public ResponseObject getUserById(@PathVariable Integer uid){
         System.out.println(uid);
         User user = userService.getUserById(uid);
+        ResponseObject responseObject = new ResponseObject();
+        if(user!=null){
         System.out.println(user.getCreateTime());
-        return  user;
+        responseObject.setCode(200);
+        responseObject.setMsg("查询成功!");
+        responseObject.setObject(user);
+        return responseObject;
+        }
+        else {
+            responseObject.setCode(ResponseObject.SUCCESS);
+            responseObject.setMsg("查无此人!");
+            responseObject.setObject(null);
+            return responseObject;
+        }
+
     }
     @GetMapping("/login")
     public Map<String,Object> login(@RequestBody User userlogin){
