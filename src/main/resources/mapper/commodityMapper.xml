@@ -12,12 +12,25 @@
         <result property="owner" column="owner"/>
         <result property="picName" column="pic_name" />
         <association property="classifyName"  javaType="com.ym.hygg.huyagg.pojo.Classify">
-            <id property="classId" column="class_id"/>
+            <id property="classId" column="classify"/>
             <result property="className" column="class_name"/>
         </association>
     </resultMap>
+    <resultMap id="commodities" type="com.ym.hygg.huyagg.pojo.Commodity">
+    <id property="id" column="id"/>
+    <result property="addTime" column="add_time" />
+    <result property="details" column="details"/>
+    <result property="name" column="name"/>
+    <result property="price" column="price"/>
+    <result property="owner" column="owner"/>
+    <result property="picName" column="pic_name" />
+    <result property="classify" column="classify" />
+    </resultMap>
     <select id="getAllCommodities" resultMap="commoditiesWithClassName">
         SELECT * FROM commodity c JOIN classify f ON c.classify = f.class_id
+    </select>
+    <select id="commodityWithAudited" resultMap="commoditiesWithClassName">
+        SELECT * FROM commodity WHERE audit !=0
     </select>
     <insert id="save" parameterType="com.ym.hygg.huyagg.pojo.Commodity">
         INSERT INTO commodity values(null,#{addTime},#{classify},#{details},#{name},#{owner}

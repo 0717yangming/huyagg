@@ -12,6 +12,12 @@ public interface CommodityMapper {
 
     List<Commodity> getAllCommodities();
 
+   // @Select("SELECT * FROM commodity WHERE audit !=0")
+    List<Commodity> commodityWithAudited();
+
+    @Select("SELECT * FROM commodity WHERE audit = 0")
+    List<Commodity> commodityWithNotAudit();
+
     @Select("SELECT * FROM commodity where id = #{id}")
     Commodity GetCommodityById(Integer id);
 
