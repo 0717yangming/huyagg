@@ -19,16 +19,18 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 public class Commodity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
     private String name;
     private Double price;
-    private String details;
     private String picName;
    // @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss"
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss" ,timezone = "GMT+8")
     private Date addTime;
     private Integer owner;
+    @OneToOne
+    private CommodityDetails commodityDetails;
     /**
      *  默认值为0，代表待审核
      *  管理员审核完后，值为审核者的id
