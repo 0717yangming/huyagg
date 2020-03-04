@@ -8,7 +8,9 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @DynamicUpdate
 @DynamicInsert
@@ -18,11 +20,13 @@ import java.util.List;
 @Entity
 public class Classify {
     @Id
+    @Column(name = "class_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer classId;
     private String className;
     @OneToMany
-    @JsonBackReference
-    private List<Commodity> commodities;
+    @JoinColumn(name = "class_id", referencedColumnName = "class_id")
+    private Set<Commodity> commodities = new HashSet<>(0);
     @Column(name = "image_path", columnDefinition = "varchar(32) default 'sale.jpg'")
     private String imagePath;
 }

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,11 +12,13 @@ import javax.persistence.OneToOne;
 @Data
 public class CommodityDetails {
     @Id
-    private Integer id;
+    @Column(name = "cd_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer cdId;
     private String details;
     private String comments;
     private Integer collect;
     private Integer sold;
-    @OneToOne(mappedBy = "commodityDetails")
+    @OneToOne
     private Commodity commodity;
 }

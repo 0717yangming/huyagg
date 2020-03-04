@@ -26,28 +26,21 @@ public class Commodity {
     private Double price;
     private String picName;
    // @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss"
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss" ,timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date addTime;
-    private Integer owner;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "uid")
+    private User user;
     @OneToOne
+    @JoinColumn(name = "cd_id", referencedColumnName = "cd_id")
     private CommodityDetails commodityDetails;
     /**
      *  默认值为0，代表待审核
      *  管理员审核完后，值为审核者的id
      */
-    @Column(name = "audit",columnDefinition = "int default 0")
+    @Column(name = "audit", columnDefinition = "int default 0")
     private Integer audit;
-    @ManyToOne
-    @JoinColumn(name = "classify")
-    private Classify classifyName;
-    @Transient
-    private Integer classify;
-    @JsonIgnore
-    public Integer getClassify() {
-        return classify;
-    }
-    @JsonProperty
-    public void setClassify(Integer classify) {
-        this.classify = classify;
-    }
+    @ManyToOne(targetEntity = Classify.class)
+    @JoinColumn(name = "class_id", referencedColumnName = "class_id")
+    private Classify classify;
 }

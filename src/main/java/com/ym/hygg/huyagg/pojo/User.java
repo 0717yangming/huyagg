@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @DynamicInsert
 @DynamicUpdate
@@ -48,4 +48,7 @@ public class User {
     @Column(name = "role",columnDefinition = "int default 1")
     private Integer role;
     private Date createTime;
+    @OneToMany
+    @JoinColumn(name = "user_id", referencedColumnName = "uid")
+    private Set<Commodity> commodities = new HashSet<>(0);
 }
