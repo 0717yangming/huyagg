@@ -12,21 +12,30 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Entity
+@Data
+@Table(name = "classify")
 @DynamicUpdate
 @DynamicInsert
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Classify {
     @Id
     @Column(name = "class_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer classId;
+    /**
+     * 分类名
+     */
     private String className;
-    @OneToMany
-    @JoinColumn(name = "class_id", referencedColumnName = "class_id")
+    /**
+     * 属于该类名的商品集合
+     */
+    @OneToMany(mappedBy = "classify")
     private Set<Commodity> commodities = new HashSet<>(0);
+    /**
+     * 类名图片
+     */
     @Column(name = "image_path", columnDefinition = "varchar(32) default 'sale.jpg'")
     private String imagePath;
 }

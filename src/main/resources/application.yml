@@ -5,15 +5,16 @@ spring:
     url: jdbc:mysql://localhost:3306/fleaMarket?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-
-    initialSize: 5
-    minIdle: 5
-    maxWait: 6000
-    maxActive: 20
+    dbcp2:
+      initial-size: 5
+      min-idle: 5
+    tomcat:
+      max-wait: 6000
+      max-active: 20
   jpa:
     show_sql: true
     hibernate:
-      ddl-auto: create
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL57Dialect
 
 

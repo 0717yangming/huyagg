@@ -5,11 +5,14 @@ import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.TokenService;
 import com.ym.hygg.huyagg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @CrossOrigin
@@ -52,13 +55,26 @@ public class UserController {
         return map;
     }
     @PostMapping
-    public User create(@RequestBody User user){
+    public ResponseObject create(@RequestBody User user){
         System.out.println(user);
+        ResponseObject ro= new ResponseObject();
         long timeMillis = System.currentTimeMillis();
         System.out.println(new Date(timeMillis));
         user.setCreateTime(new Date(timeMillis));
-        int i =  userService.save(user);
-        System.out.println("添加了"+i+"条记录");
-        return user;
+        User save = null;
+
+        save  =  userService.save(user);
+        if(save!=null) {
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg("添加成功");
+            ro.setObject(save);
+            return ro;
+        }
+        else {
+            ro.setCode(ResponseObject.Reject);
+            ro.setMsg("添加失败");
+            return ro;
+        }
+
     }
 }

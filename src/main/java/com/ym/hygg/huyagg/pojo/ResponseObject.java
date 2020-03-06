@@ -13,4 +13,8 @@ public class ResponseObject {
     private Object object;
     public static final Integer SUCCESS = 200;
     public static final Integer Fail = 404;
+    /**
+     * 拒绝访问
+     */
+    public static final Integer Reject = 401;
 }

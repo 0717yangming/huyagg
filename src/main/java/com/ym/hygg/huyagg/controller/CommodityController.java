@@ -32,7 +32,8 @@ public class CommodityController {
     @PassToken
     @GetMapping("/{id}")
     public Commodity getCommodityById(@PathVariable Integer id){
-        return commodityService.getCommodityById(id);
+        Optional<Commodity> optional = commodityService.getCommodityById(id);
+        return optional.get();
     }
     @GetMapping("/classify/{id}")
     public List<Commodity> getCommoditiesByType(@PathVariable Integer id){
@@ -41,21 +42,21 @@ public class CommodityController {
     @UserLoginToken
     @PostMapping
     public Map<String,Object> save(@NotNull Commodity commodity,@RequestParam("image") MultipartFile multipartFile){
-        commodity.setAddTime(new Date(System.currentTimeMillis()));
+        commodity.setReleaseTime(new Date(System.currentTimeMillis()));
         Map<String,Object> map = null;
         if(multipartFile.getSize() > 0){
             map = ImageUploadUtils.uploadImage(multipartFile);
         String imageName = (String)map.get("newName");
         commodity.setPicName(imageName);
         }
-       int i = commodityService.save(commodity);
-        if(i > 0){
+        Commodity save = commodityService.save(commodity);
+        if(save != null){
             map.put("code",200);
+            map.put("object",save);
         }else {
             map.put("code",301);
         }
         System.out.println("添加"+commodity);
-        System.out.println("添加了"+i+"件商品");
         return map;
     }
     @UserLoginToken
@@ -68,20 +69,26 @@ public class CommodityController {
             commodity.setPicName(imageName);
         }
         System.out.println("修改"+commodity);
-        int i = commodityService.update(commodity);
-        if(i > 0){
+        Commodity save = commodityService.save(commodity);
+        if(save != null){
             map.put("code",200);
+            map.put("object",save);
         }else {
             map.put("code",301);
+            map.put("object",null);
         }
-        System.out.println("修改了"+i+"条记录");
         return map;
     }
     @UserLoginToken
     @DeleteMapping("/{id}")
     public ResponseObject delete(@PathVariable Integer id){
-        int i = commodityService.delete(id);
-        return new ResponseObject(200,"删除成功",null);
+        try {
+            commodityService.delete(id);
+            return new ResponseObject(ResponseObject.SUCCESS,"删除成功",null);
+        }catch (Exception ex){
+            return new ResponseObject(ResponseObject.Fail,"删除失败",null);
+        }
+
     }
     /*
     图片上传

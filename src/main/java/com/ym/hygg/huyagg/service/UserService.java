@@ -4,6 +4,6 @@ import com.ym.hygg.huyagg.pojo.User;
 
 public interface UserService {
     User getUserById(Integer id);
-    int save(User user);
+    User save(User user);
     User getUserByNameAndPassword(String username,String password);
 }

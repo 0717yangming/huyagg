@@ -4,13 +4,13 @@ import com.ym.hygg.huyagg.pojo.Commodity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface CommodityService {
     List<Commodity> queryAllCommodity();
-    Commodity getCommodityById(Integer id);
+    Optional<Commodity> getCommodityById(Integer id);
     List<Commodity> getCommoditiesByType(Integer classify);
-    int save(Commodity commodity);
-    int delete(Integer id);
-    int update(Commodity commodity);
+    Commodity save(Commodity commodity);
+    void delete(Integer id);
 }

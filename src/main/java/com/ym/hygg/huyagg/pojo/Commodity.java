@@ -18,21 +18,39 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "commodity")
 public class Commodity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    /**
+     * 商品名称
+     */
     private String name;
+    /**
+     * 商品价格
+     */
     private Double price;
+    /**
+     * 图片名称
+     */
     private String picName;
+    /**
+     * 发布时间
+     */
    // @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss"
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
-    private Date addTime;
+    private Date releaseTime;
+    /**
+     * 商品所属用户
+     */
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "uid")
     private User user;
-    @OneToOne
-    @JoinColumn(name = "cd_id", referencedColumnName = "cd_id")
+    /**
+     * 商品的详情
+     */
+    @OneToOne(mappedBy = "commodity")
     private CommodityDetails commodityDetails;
     /**
      *  默认值为0，代表待审核
@@ -40,6 +58,9 @@ public class Commodity {
      */
     @Column(name = "audit", columnDefinition = "int default 0")
     private Integer audit;
+    /**
+     * 商品的分类
+     */
     @ManyToOne(targetEntity = Classify.class)
     @JoinColumn(name = "class_id", referencedColumnName = "class_id")
     private Classify classify;
