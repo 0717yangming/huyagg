@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class ImageUploadUtils {
 
-    public static Map<String,Object> uploadImage(MultipartFile file){
+    public static Map<String,Object> uploadImage(MultipartFile file, String oldImage){
         Map<String,Object> map = new HashMap<>();
         String fileType = file.getContentType();
         String msg = "";
@@ -31,6 +31,16 @@ public class ImageUploadUtils {
                 msg = "图片上传成功";
                 map.put("msg",msg);
                 map.put("newName",newName);
+                if(oldImage != null && !oldImage.equals("")){
+                    file1 = new File(newPath+"/"+oldImage);
+                    System.out.println(newPath+"/"+oldImage);
+                    if (file1.exists()){
+                        System.out.println("图片存在可删除");
+                        boolean rt = file1.delete();
+                        System.out.println("DEBUG----删除图片--"+rt);
+                    }
+
+                }
                 return map;
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.ym.hygg.huyagg;
 
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -8,6 +9,7 @@ class HuyaggApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

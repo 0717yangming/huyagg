@@ -1,11 +1,14 @@
 package com.ym.hygg.huyagg.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,13 +16,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 @DynamicInsert
 @DynamicUpdate
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "user",indexes = @Index(columnList = "username"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,14 +90,19 @@ public class User {
     /**
      * 账户的创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-hh hh:mm:ss")
+
+    @JsonFormat(pattern = "yyyy-MM-hh hh:mm:ss", timezone = "GMT+8")
     private Date createTime;
     /**
      * 所属的商品列表
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Commodity> commodities = new HashSet<>(0);
-
+    /**
+     * 评论
+     */
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Comments> comments = new HashSet<>(0);
 }

@@ -11,6 +11,7 @@ public class ResponseObject {
     private Integer code;
     private String msg;
     private Object object;
+    private String token;
     public static final Integer SUCCESS = 200;
     public static final Integer Fail = 404;
     /**

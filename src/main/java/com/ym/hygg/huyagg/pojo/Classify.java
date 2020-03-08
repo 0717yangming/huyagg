@@ -1,6 +1,7 @@
 package com.ym.hygg.huyagg.pojo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Classify {
     /**
      * 属于该类名的商品集合
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "classify")
     private Set<Commodity> commodities = new HashSet<>(0);
     /**

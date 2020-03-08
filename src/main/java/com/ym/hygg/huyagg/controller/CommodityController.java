@@ -1,5 +1,6 @@
 package com.ym.hygg.huyagg.controller;
 
+
 import com.ym.hygg.huyagg.annotation.PassToken;
 import com.ym.hygg.huyagg.annotation.UserLoginToken;
 import com.ym.hygg.huyagg.pojo.Commodity;
@@ -8,6 +9,8 @@ import com.ym.hygg.huyagg.service.CommodityService;
 import com.ym.hygg.huyagg.utils.ImageUploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,17 +42,26 @@ public class CommodityController {
     public List<Commodity> getCommoditiesByType(@PathVariable Integer id){
         return commodityService.getCommoditiesByType(id);
     }
+
+    /**
+     * 发布商品
+     * @param commodity
+     * @param multipartFile
+     * @return
+     */
     @UserLoginToken
     @PostMapping
-    public Map<String,Object> save(@NotNull Commodity commodity,@RequestParam("image") MultipartFile multipartFile){
+    public Map<String,Object> save(@NotNull Commodity commodity,@Nullable @RequestParam("image") MultipartFile multipartFile){
         commodity.setReleaseTime(new Date(System.currentTimeMillis()));
         Map<String,Object> map = null;
-        if(multipartFile.getSize() > 0){
-            map = ImageUploadUtils.uploadImage(multipartFile);
+        if(multipartFile!=null && multipartFile.getSize() > 0 ){
+            map = ImageUploadUtils.uploadImage(multipartFile, commodity.getPicName());
         String imageName = (String)map.get("newName");
         commodity.setPicName(imageName);
         }
         Commodity save = commodityService.save(commodity);
+        if(map == null)
+            map = new HashMap<>();
         if(save != null){
             map.put("code",200);
             map.put("object",save);
@@ -61,10 +73,10 @@ public class CommodityController {
     }
     @UserLoginToken
     @PutMapping
-    public Map<String, Object> update(@RequestBody Commodity commodity, @RequestParam("image") MultipartFile multipartFile){
+    public Map<String, Object> update(@RequestBody Commodity commodity,@Nullable @RequestParam("image") MultipartFile multipartFile){
         Map<String,Object> map = null;
         if(multipartFile.getSize() > 0){
-            map = ImageUploadUtils.uploadImage(multipartFile);
+            map = ImageUploadUtils.uploadImage(multipartFile, commodity.getPicName());
             String imageName = (String)map.get("newName");
             commodity.setPicName(imageName);
         }
@@ -84,9 +96,9 @@ public class CommodityController {
     public ResponseObject delete(@PathVariable Integer id){
         try {
             commodityService.delete(id);
-            return new ResponseObject(ResponseObject.SUCCESS,"删除成功",null);
+            return new ResponseObject(ResponseObject.SUCCESS,"删除成功",null,null);
         }catch (Exception ex){
-            return new ResponseObject(ResponseObject.Fail,"删除失败",null);
+            return new ResponseObject(ResponseObject.Fail,"删除失败",null,null);
         }
 
     }

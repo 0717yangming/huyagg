@@ -1,9 +1,11 @@
 package com.ym.hygg.huyagg.service.impl;
 
+import com.ym.hygg.huyagg.common.CommonUtils;
 import com.ym.hygg.huyagg.dao.CommodityRepository;
 import com.ym.hygg.huyagg.pojo.Commodity;
 import com.ym.hygg.huyagg.service.CommodityService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,14 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public Commodity save(Commodity commodity) {
+        if(commodity.getId() != null){
+            String[] nullProperties = CommonUtils.getNullProperties(commodity);
+            Optional<Commodity> userOptional = commodityRepository.findById(commodity.getId());
+            if(userOptional.isPresent()){
+                BeanUtils.copyProperties(commodity,userOptional.get(),nullProperties);
+                commodity = userOptional.get();
+            }
+        }
         return commodityRepository.save(commodity);
     }
 

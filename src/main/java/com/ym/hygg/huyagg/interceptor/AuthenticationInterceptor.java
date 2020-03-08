@@ -10,6 +10,7 @@ import com.ym.hygg.huyagg.annotation.UserLoginToken;
 import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,11 +18,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
+    @Transactional
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse response, Object object) throws Exception {
         String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
@@ -50,17 +53,19 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 String userId;
                 try {
                     //id state who
-                    userId = JWT.decode(token).getAudience().get(2);
+                    userId = JWT.decode(token).getAudience().get(0);
                     System.out.println("DEBUG:"+JWT.decode(token).getAudience());
                 } catch (JWTDecodeException j) {
                     throw new RuntimeException("401");
                 }
                 System.out.println("DEBUG:"+userId);
                 User user = userService.getUserById(Integer.parseInt(userId));
+                Optional<User> optionalUser = Optional.ofNullable(user);
                 if (user == null) {
                     throw new RuntimeException("用户不存在，请重新登录");
                 }
                 // 验证 token
+                System.out.println("DEBUG-------->"+optionalUser.get());
                 JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
                 try {
                     jwtVerifier.verify(token);

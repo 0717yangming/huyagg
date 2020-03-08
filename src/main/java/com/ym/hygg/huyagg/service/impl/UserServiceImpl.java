@@ -1,16 +1,25 @@
 package com.ym.hygg.huyagg.service.impl;
 
+import com.ym.hygg.huyagg.common.CommonUtils;
 import com.ym.hygg.huyagg.dao.UserRepository;
 import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.UserService;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.hibernate.criterion.Example;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.beans.PropertyDescriptor;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,8 +33,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user)
     {
-        User save = userRepository.save(user);
-        return save;
+        if(user.getUid() != null){
+            String[] nullProperties = CommonUtils.getNullProperties(user);
+            Optional<User> userOptional = userRepository.findById(user.getUid());
+            if(userOptional.isPresent()){
+                BeanUtils.copyProperties(user,userOptional.get(),nullProperties);
+                user = userOptional.get();
+            }
+        }
+        return userRepository.save(user);
     }
 
     @Override
@@ -34,4 +50,5 @@ public class UserServiceImpl implements UserService {
         Optional<User> opt = Optional.ofNullable(save);
         return opt.get();
     }
+
 }
