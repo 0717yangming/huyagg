@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.criterion.Order;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
@@ -105,4 +106,7 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Comments> comments = new HashSet<>(0);
+    @JsonIgnore
+    @OneToMany( mappedBy = "user")
+    private Set<Orders> orders;
 }

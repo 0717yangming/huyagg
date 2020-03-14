@@ -4,6 +4,8 @@ import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.TokenService;
 import com.ym.hygg.huyagg.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +16,13 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
     @Autowired
     private UserService userService;
@@ -53,19 +57,21 @@ public class UserController {
      */
     @Transactional
     @GetMapping("/login")
-    public ResponseObject login(@RequestBody User userlogin){
+    public ResponseObject login(@Param("username") String username, @Param("password") String password){
+        log.info(username+"：用户试图登陆");
         ResponseObject ro = new ResponseObject();
-        System.out.println(userlogin.getUsername()+":"+userlogin.getPassword());
-        User user = userService.getUserByNameAndPassword(userlogin.getUsername(), userlogin.getPassword());
-        if(user == null)
+        System.out.println(username+":"+password);
+        Optional<User> user = userService.getUserByNameAndPassword(username, password);
+        if(!user.isPresent())
         {
+            log.info(username+"：登录失败");
             ro.setMsg("用户名或密码错误");
             ro.setCode(ResponseObject.Reject);
            return ro;
         }
         System.out.println(user);
         ro.setObject(user);
-        String token = tokenService.getToken(user);
+        String token = tokenService.getToken(user.get());
         ro.setToken(token);
         ro.setCode(ResponseObject.SUCCESS);
         ro.setMsg("登录成功！");

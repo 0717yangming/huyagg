@@ -45,10 +45,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByNameAndPassword(String username, String password)  {
+    public Optional<User> getUserByNameAndPassword(String username, String password)  {
         User save = userRepository.getUserByUserNameAndPwd(username, password);
         Optional<User> opt = Optional.ofNullable(save);
-        return opt.get();
+        return opt;
     }
 
 }

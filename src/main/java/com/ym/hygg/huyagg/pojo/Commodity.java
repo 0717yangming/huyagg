@@ -11,6 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @DynamicUpdate
 @DynamicInsert
@@ -64,4 +65,9 @@ public class Commodity {
     @ManyToOne(targetEntity = Classify.class)
     @JoinColumn(name = "class_id", referencedColumnName = "class_id")
     private Classify classify;
+    /**
+     * 订单
+     */
+    @ManyToMany(mappedBy = "commodity")
+    private Set<Orders> orders;
 }
