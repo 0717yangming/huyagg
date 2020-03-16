@@ -20,7 +20,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseObject save(@RequestBody Orders orders){
-        Orders save = ordersService.save(orders);
+        Integer save = ordersService.save(orders);
         ResponseObject ro = new ResponseObject();
         ro.setCode(ResponseObject.SUCCESS);
         ro.setMsg("订单添加成功");

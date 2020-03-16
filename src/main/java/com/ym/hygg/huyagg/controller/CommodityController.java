@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/commodity")
 public class CommodityController {
-    @Autowired
+    @Resource
     private CommodityService commodityService;
     @PassToken
     @GetMapping
@@ -59,7 +60,7 @@ public class CommodityController {
         String imageName = (String)map.get("newName");
         commodity.setPicName(imageName);
         }
-        Commodity save = commodityService.save(commodity);
+        Integer save = commodityService.save(commodity);
         if(map == null)
             map = new HashMap<>();
         if(save != null){
@@ -81,7 +82,7 @@ public class CommodityController {
             commodity.setPicName(imageName);
         }
         System.out.println("修改"+commodity);
-        Commodity save = commodityService.save(commodity);
+        Integer save = commodityService.save(commodity);
         if(save != null){
             map.put("code",200);
             map.put("object",save);
@@ -143,14 +144,4 @@ public class CommodityController {
              root.put("result_msg",result_msg);
             return root;
     }
-    @UserLoginToken
-    @PostMapping("/image")
-    public Map<String,Object> singleFileUpload(@RequestParam("image") MultipartFile file) {
-            Map<String,Object> map = new HashMap<>();
-                String relpath = System.getProperty("user.dir");
-                map.put("relpath",relpath);
-                return map;
-    }
-
-
 }

@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 @RestController
 @RequestMapping("/details")
 public class CommodityDetailsController {
-    @Autowired
+    @Resource
     private CommodityDetailsService commodityDetailsService;
     @GetMapping
     public ResponseObject getCommodityDetails(String cdId){
         ResponseObject ro = new ResponseObject();
         try {
-            CommodityDetails commodityDetails = commodityDetailsService.ByCommodityId(Integer.parseInt(cdId));
+            CommodityDetails commodityDetails = commodityDetailsService.geoOneById(Integer.parseInt(cdId));
             ro.setCode(ResponseObject.SUCCESS);
             ro.setMsg("商品详情");
             ro.setObject(commodityDetails);

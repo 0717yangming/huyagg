@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "classify")
+@Table(name = "classify" )
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor
@@ -28,16 +28,15 @@ public class Classify {
     /**
      * 分类名
      */
+    @Column(name = "class_name")
     private String className;
-    /**
-     * 属于该类名的商品集合
-     */
-    @JsonIgnore
-    @OneToMany(mappedBy = "classify")
-    private Set<Commodity> commodities = new HashSet<>(0);
+
     /**
      * 类名图片
      */
     @Column(name = "image_path", columnDefinition = "varchar(32) default 'sale.jpg'")
     private String imagePath;
+
+    @OneToMany(mappedBy = "classId")
+    private Set<Commodity> commodity;
 }

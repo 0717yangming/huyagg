@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface UserService {
     User getUserById(Integer id);
-    User save(User user);
-    Optional<User> getUserByNameAndPassword(String username, String password);
+    Integer save(User user);
+    boolean update(User user);
+    Optional<User> getOneByUsername(String username);
 }

@@ -1,5 +1,6 @@
 package com.ym.hygg.huyagg.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,14 +29,18 @@ public class Comments {
     /**
      * 评论时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
     private Date date;
     /**
      * 评论者
      */
+    @JoinColumn(name = "user_id")
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "uid")
     private User user;
+    /**
+     * 评论在那个商品商品上
+     */
     @ManyToOne
-    @JoinColumn(name = "cd_id",referencedColumnName = "cd_id")
-    private CommodityDetails commodityDetails;
+    @JoinColumn(name = "com_id")
+    private Commodity commodity;
 }

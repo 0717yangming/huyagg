@@ -1,6 +1,6 @@
 package com.ym.hygg.huyagg.service.impl;
 
-import com.ym.hygg.huyagg.dao.OrdersRepository;
+import com.ym.hygg.huyagg.dao.OrdersDao;
 import com.ym.hygg.huyagg.pojo.Orders;
 import com.ym.hygg.huyagg.service.OrdersService;
 import org.springframework.stereotype.Service;
@@ -12,25 +12,29 @@ import java.util.Optional;
 @Service
 public class OrdersServiceImpl implements OrdersService {
     @Resource
-    private OrdersRepository ordersRepository;
+    private OrdersDao ordersDao;
     @Override
-    public Orders save(Orders orders) {
-        final Orders save = ordersRepository.save(orders);
-        return save;
+    public Integer save(Orders orders) {
+        return  ordersDao.save(orders);
+    }
+
+    @Override
+    public boolean update(Orders orders) {
+        return ordersDao.update(orders);
     }
 
     @Override
     public Optional<Orders> findBySerial(Long serial) {
-        return ordersRepository.findById(serial);
+        return Optional.ofNullable(ordersDao.findBySerial(serial));
     }
 
     @Override
     public List<Orders> findAllByUserId(Integer uid) {
-        return ordersRepository.findByUser(uid);
+        return ordersDao.findAllByUserId(uid);
     }
 
     @Override
     public void deleteBySerial(Long serial) {
-         ordersRepository.deleteById(serial);
+         ordersDao.deleteBySerial(serial);
     }
 }

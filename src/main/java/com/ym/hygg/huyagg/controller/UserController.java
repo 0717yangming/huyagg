@@ -1,5 +1,6 @@
 package com.ym.hygg.huyagg.controller;
 
+import com.ym.hygg.huyagg.dao.UserDao;
 import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.pojo.User;
 import com.ym.hygg.huyagg.service.TokenService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,9 +26,9 @@ import java.util.concurrent.locks.ReentrantLock;
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private TokenService tokenService;
     @Transactional
     @GetMapping("/{uid}")
@@ -39,38 +41,40 @@ public class UserController {
         responseObject.setCode(200);
         responseObject.setMsg("查询成功!");
         responseObject.setObject(user);
-        return responseObject;
         }
         else {
             responseObject.setCode(ResponseObject.SUCCESS);
             responseObject.setMsg("查无此人!");
             responseObject.setObject(null);
-            return responseObject;
         }
+        return responseObject;
 
     }
 
     /**
      * 登录，添加transactional环境，解决 no session 问题
-     * @param userlogin
-     * @return
+     * @return ResponseObject
      */
     @Transactional
     @GetMapping("/login")
     public ResponseObject login(@Param("username") String username, @Param("password") String password){
         log.info(username+"：用户试图登陆");
         ResponseObject ro = new ResponseObject();
-        System.out.println(username+":"+password);
-        Optional<User> user = userService.getUserByNameAndPassword(username, password);
+        Optional<User> user = userService.getOneByUsername(username);
         if(!user.isPresent())
         {
             log.info(username+"：登录失败");
-            ro.setMsg("用户名或密码错误");
-            ro.setCode(ResponseObject.Reject);
+            ro.setMsg("用户名不存在！");
+            ro.setCode(ResponseObject.Fail);
            return ro;
         }
-        System.out.println(user);
-        ro.setObject(user);
+        if (!(user.get().getPassword().equals(password))){
+            log.info(username+"：登录失败");
+            ro.setMsg("密码错误！");
+            ro.setCode(ResponseObject.Fail);
+            return ro;
+        }
+        ro.setObject(user.get());
         String token = tokenService.getToken(user.get());
         ro.setToken(token);
         ro.setCode(ResponseObject.SUCCESS);
@@ -80,30 +84,43 @@ public class UserController {
 
     /**
      * 注册用户
-     * @param user
-     * @return
+     * @return ResponseObject
      */
     @Transactional
     @PostMapping
     public ResponseObject create(@RequestBody User user){
-        System.out.println(user+"----->正在注册<---");
+        log.info(user.getUsername()+"====>正在注册");
         ResponseObject ro= new ResponseObject();
         long timeMillis = System.currentTimeMillis();
-        System.out.println(new Date(timeMillis));
         user.setCreateTime(new Date(timeMillis));
-        User save = null;
+        Integer save = null;
         save  =  userService.save(user);
+        log.info("id---->"+save);
         if(save!=null) {
+            log.info(user.getUsername()+"====>注册成功！");
             ro.setCode(ResponseObject.SUCCESS);
             ro.setMsg("注册成功");
             ro.setObject(save);
-            return ro;
         }
         else {
+            log.info(user.getUsername()+"====>注册失败！");
             ro.setCode(ResponseObject.Reject);
             ro.setMsg("注册失败");
-            return ro;
         }
-
+        return ro;
+    }
+    @Transactional
+    @PutMapping
+    public ResponseObject update(@RequestBody User user){
+        ResponseObject ro= new ResponseObject();
+        boolean update = userService.update(user);
+        if(update){
+            ro.setMsg("修改成功！");
+            ro.setCode(ResponseObject.SUCCESS);
+        }else{
+            ro.setMsg("修改失败！");
+            ro.setCode(ResponseObject.Fail);
+        }
+        return ro;
     }
 }

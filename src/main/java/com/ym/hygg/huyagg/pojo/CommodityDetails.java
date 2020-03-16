@@ -22,11 +22,6 @@ public class CommodityDetails {
      */
     private String details;
     /**
-     * 评论
-     */
-    @OneToMany(mappedBy = "commodityDetails")
-    private Set<Comments> comments;
-    /**
      * 收藏
      */
     private Integer collect;
@@ -34,6 +29,8 @@ public class CommodityDetails {
      * 已售
      */
     private Integer sold;
+
     @OneToOne
+    @JoinColumn(name = "com_id")
     private Commodity commodity;
 }

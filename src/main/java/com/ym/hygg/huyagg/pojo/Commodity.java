@@ -23,7 +23,8 @@ import java.util.Set;
 public class Commodity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "com_id")
+    private Integer comId;
     /**
      * 商品名称
      */
@@ -35,18 +36,20 @@ public class Commodity {
     /**
      * 图片名称
      */
+    @Column(name = "pic_name")
     private String picName;
     /**
      * 发布时间
      */
    // @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss"
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
+    @Column(name = "release_time")
     private Date releaseTime;
     /**
-     * 商品所属用户
+     * 商品所属用户或发布需求的用户
      */
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "uid")
+    @JoinColumn(name = "user_id")
     private User user;
     /**
      * 商品的详情
@@ -62,12 +65,15 @@ public class Commodity {
     /**
      * 商品的分类
      */
-    @ManyToOne(targetEntity = Classify.class)
-    @JoinColumn(name = "class_id", referencedColumnName = "class_id")
-    private Classify classify;
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Classify classId;
+
     /**
-     * 订单
+     * 描述商品和评论之间的关系
+     * 一个商品都应该对应对各评论
+     * 放弃外键维护
      */
-    @ManyToMany(mappedBy = "commodity")
-    private Set<Orders> orders;
+    @OneToMany(mappedBy = "commodity")
+    private Set<Comments> comments;
 }

@@ -30,9 +30,33 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer uid;
     /**
+     * 用户名
+     */
+    @Column(name = "username", unique = true)
+    private String username;
+    /**
+     * 密码
+     */
+    private String password;
+    /**
+     * 真实姓名
+     */
+    private String actualName;
+    /**
+     * 电话
+     */
+    private String phone;
+    /**
+     * 性别
+     */
+    private String sex;
+    /**
+     * 专业
+     */
+    private String major;
+    /**
      * 学院
      */
-    @NotNull
     private String academy;
     /**
      * 班级
@@ -47,31 +71,6 @@ public class User {
      */
     private String domitory;
     /**
-     * 专业
-     */
-    private String major;
-    /**
-     * 用户名
-     */
-    @Column(name = "username", unique = true)
-    private String username;
-    /**
-     * 真实姓名
-     */
-    private String actualName;
-    /**
-     * 密码
-     */
-    private String password;
-    /**
-     * 电话
-     */
-    private String phone;
-    /**
-     * 性别
-     */
-    private String sex;
-    /**
      * 信誉分
      */
     @Column(name = "reputation",columnDefinition = "int default 100")
@@ -83,30 +82,31 @@ public class User {
     @Column(name = "state",columnDefinition = "int default 1")
     private Integer state;
     /**
-     * 1: 普通用户
-     * 2： 管理员
+     * 1: 普通用户，具有发布需求的功能
+     * 2： 卖家，具有发布商品的功能
+     * 3： 管理员：可以对其他角色的账号状态经行修改
      */
     @Column(name = "role",columnDefinition = "int default 1")
     private Integer role;
     /**
      * 账户的创建时间
      */
-
     @JsonFormat(pattern = "yyyy-MM-hh hh:mm:ss", timezone = "GMT+8")
     private Date createTime;
+
     /**
-     * 所属的商品列表
+     * 描述用户和商品的一对多关系
+     * 放弃外键维护权
      */
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private Set<Commodity> commodities = new HashSet<>(0);
+    private Set<Commodity> commodity;
     /**
-     * 评论
+     * 描述跟评论之间的关系
      */
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private Set<Comments> comments = new HashSet<>(0);
-    @JsonIgnore
-    @OneToMany( mappedBy = "user")
+    private Set<Comments> comments;
+
+    @OneToMany(mappedBy = "user")
     private Set<Orders> orders;
+
 }

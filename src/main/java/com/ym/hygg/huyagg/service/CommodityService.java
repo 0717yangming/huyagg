@@ -11,6 +11,6 @@ public interface CommodityService {
     List<Commodity> queryAllCommodity();
     Optional<Commodity> getCommodityById(Integer id);
     List<Commodity> getCommoditiesByType(Integer classify);
-    Commodity save(Commodity commodity);
+    Integer save(Commodity commodity);
     void delete(Integer id);
 }
