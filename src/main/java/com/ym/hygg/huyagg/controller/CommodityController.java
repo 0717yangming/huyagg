@@ -8,6 +8,7 @@ import com.ym.hygg.huyagg.pojo.ResponseObject;
 import com.ym.hygg.huyagg.service.CommodityService;
 import com.ym.hygg.huyagg.utils.ImageUploadUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,70 +28,109 @@ import java.util.*;
 public class CommodityController {
     @Resource
     private CommodityService commodityService;
+
+    @Resource
+    private ImageUploadUtils uploadUtils;
+
+    /**
+     * 查询所有商品
+     * 根据distinguish的值来决定查询
+     * 1 代表查询的时所有卖家发布的商品
+     * 0 代表查询的是所有买家发布的需求
+     */
     @PassToken
-    @GetMapping
-    public List<Commodity> queryAll(){
+    @GetMapping("/{distinguish}")
+    public ResponseObject queryAll(@PathVariable Integer distinguish){
+        ResponseObject ro = new ResponseObject();
        log.info("获取所有商品");
-        return commodityService.queryAllCommodity();
+       String msg = (distinguish == 1) ? "查询需求" : "查询商品";
+        List<Commodity> commodities = commodityService.queryAllCommodity(distinguish);
+        log.info("DEBUG 看看数据库没有返回数据 数组时怎么呀的："+commodities);
+        if(commodities != null && commodities.size()>0){
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg(msg + "成功！");
+            ro.setObject(commodities);
+        }else {
+            ro.setCode(ResponseObject.Fail);
+            ro.setMsg(msg + "失败！");
+        }
+        return ro;
     }
     @PassToken
     @GetMapping("/{id}")
-    public Commodity getCommodityById(@PathVariable Integer id){
+    public ResponseObject getCommodityById(@PathVariable Integer id){
         Optional<Commodity> optional = commodityService.getCommodityById(id);
-        return optional.get();
+        ResponseObject ro = new ResponseObject(ResponseObject.Fail, "该商品id查询为空！");
+        if(optional.isPresent()){
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg("查询成功！");
+            ro.setObject(optional.get());
+        }
+        return ro;
     }
     @GetMapping("/classify/{id}")
-    public List<Commodity> getCommoditiesByType(@PathVariable Integer id){
-        return commodityService.getCommoditiesByType(id);
+    public ResponseObject getCommoditiesByType(@PathVariable Integer id){
+        ResponseObject ro = new ResponseObject(ResponseObject.Fail, "无该分类的商品！");
+        List<Commodity> commodities = commodityService.getCommoditiesByType(id);
+        if(commodities != null && commodities.size() > 0){
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg("查询成功！");
+            ro.setObject(commodities);
+        }
+        return ro;
     }
 
     /**
      * 发布商品
-     * @param commodity
-     * @param multipartFile
-     * @return
      */
     @UserLoginToken
     @PostMapping
-    public Map<String,Object> save(@NotNull Commodity commodity,@Nullable @RequestParam("image") MultipartFile multipartFile){
+    public ResponseObject save(@RequestBody Commodity commodity){
         commodity.setReleaseTime(new Date(System.currentTimeMillis()));
-        Map<String,Object> map = null;
-        if(multipartFile!=null && multipartFile.getSize() > 0 ){
-            map = ImageUploadUtils.uploadImage(multipartFile, commodity.getPicName());
-        String imageName = (String)map.get("newName");
-        commodity.setPicName(imageName);
+        Optional<Integer> save = Optional.ofNullable(commodityService.save(commodity));
+        ResponseObject ro = new ResponseObject(ResponseObject.Fail,"保存失败！");
+        if(save.isPresent()){
+            log.info("添加商品："+save.get());
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg("保存成功!");
+            ro.setObject(save.get());
         }
-        Integer save = commodityService.save(commodity);
-        if(map == null)
-            map = new HashMap<>();
-        if(save != null){
-            map.put("code",200);
-            map.put("object",save);
-        }else {
-            map.put("code",301);
+        return ro;
+    }
+
+    @PostMapping("/upload")
+    public ResponseObject uploadImage(@RequestParam("comId") Integer comId, @RequestParam("image") MultipartFile multipartFile){
+        Map<String, Object> map = uploadUtils.uploadImage(multipartFile, comId);
+        ResponseObject ro = new ResponseObject(ResponseObject.Reject,"无法访问！");
+        if(map != null){
+            Integer code = (Integer) map.get("code");
+            String msg = (String)map.get("msg");
+            ro.setMsg(msg);
+            ro.setCode(code);
+            return ro;
         }
-        System.out.println("添加"+commodity);
-        return map;
+        return ro;
     }
     @UserLoginToken
     @PutMapping
-    public Map<String, Object> update(@RequestBody Commodity commodity,@Nullable @RequestParam("image") MultipartFile multipartFile){
-        Map<String,Object> map = null;
-        if(multipartFile.getSize() > 0){
-            map = ImageUploadUtils.uploadImage(multipartFile, commodity.getPicName());
-            String imageName = (String)map.get("newName");
-            commodity.setPicName(imageName);
+    public ResponseObject update(@RequestBody Commodity commodity){
+        ResponseObject ro = new ResponseObject(ResponseObject.Fail,"保存失败");
+        Optional<Integer> save = Optional.ofNullable(commodityService.update(commodity));
+        if (save.isPresent()){
+            ro.setCode(ResponseObject.SUCCESS);
+            ro.setMsg("修改成功!");
+            ro.setObject(save.get());
         }
-        System.out.println("修改"+commodity);
-        Integer save = commodityService.save(commodity);
-        if(save != null){
-            map.put("code",200);
-            map.put("object",save);
-        }else {
-            map.put("code",301);
-            map.put("object",null);
-        }
-        return map;
+        return ro;
+    }
+    @UserLoginToken
+    @GetMapping("/self")
+    public ResponseObject self(@RequestParam("uid") Integer uid, @RequestParam("distinguish") Integer distinguish){
+        List<Commodity> self = commodityService.getSelf(uid, distinguish);
+        ResponseObject ro = new ResponseObject(ResponseObject.SUCCESS,"查询成功！");
+        ro.setObject(self);
+        return ro;
+
     }
     @UserLoginToken
     @DeleteMapping("/{id}")
@@ -103,45 +143,6 @@ public class CommodityController {
         }
 
     }
-    /*
-    图片上传
-     */
-    @UserLoginToken
-    @PostMapping("/upload")
-    public Map<String, Object> upload(@RequestParam("fileName")MultipartFile file){
-        String result_msg = "";
-        Map<String,Object> root=new HashMap<String, Object>();
-        if(file.getSize()/1000>100){
-            result_msg = "图片大小不能超过100kb";
-        }
-        else{
-            String fileType = file.getContentType();
-            if(fileType.equals("image/jpeg") || fileType.equals("image/png") || fileType.equals("image/jpg")){
-               // String localPath = "E:\\IdeaProjects\\huyagg\\target\\classes\\static\\images";
-                //String localPath = "E:\\IdeaProjects\\huyagg\\src\\main\\resources\\static\\images\\";
-                String localPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\images\\";
-                String fileName = file.getOriginalFilename();
-                String suffixName = fileName.substring(fileName.lastIndexOf("."));
-                fileName = UUID.randomUUID()+suffixName;
-                File newfile = new File(localPath + fileName );
-                if (!newfile.getParentFile().exists())
-                {
-                    System.out.println("mkdirs");
-                    newfile.getParentFile().mkdirs();
-                }
-                String relativePath="images/"+fileName;
-                root.put("relativePath",relativePath);//前端根据是否存在该字段来判断上传是否成功
-                result_msg="图片上传成功";
-                try{
-                    file.transferTo(newfile);
 
-                }catch (IOException e){
-                    e.printStackTrace();
-                    result_msg="图片上传失败";
-                }
-            }
-        }
-             root.put("result_msg",result_msg);
-            return root;
-    }
+
 }

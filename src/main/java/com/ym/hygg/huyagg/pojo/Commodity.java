@@ -58,16 +58,23 @@ public class Commodity {
     private CommodityDetails commodityDetails;
     /**
      *  默认值为0，代表待审核
-     *  管理员审核完后，值为审核者的id
+     *  管理员审核完后，
      */
     @Column(name = "audit", columnDefinition = "int default 0")
     private Integer audit;
+    /**
+     *区分商品是需求还是销售
+     * 0 代表是买家发布的需求
+     * 1 代表卖家发布的商品
+     */
+    @Column(name = "distinguish")
+    private Integer distinguish;
     /**
      * 商品的分类
      */
     @ManyToOne
     @JoinColumn(name = "class_id")
-    private Classify classId;
+    private Classify classify;
 
     /**
      * 描述商品和评论之间的关系

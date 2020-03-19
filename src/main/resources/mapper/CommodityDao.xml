@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.hygg.huyagg.dao.CommodityDao">
+    <resultMap id="baseMap" type="com.ym.hygg.huyagg.pojo.Commodity">
+        <id property="comId" column="com_id"/>
+        <result property="audit" column="audit"/>
+        <result property="distinguish" column="distinguish"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="picName" column="pic_name"/>
+        <result property="releaseTime" column="release_time"/>
+        <association  javaType="com.ym.hygg.huyagg.pojo.User" property="user">
+            <id property="uid" column="user_id"/>
+        </association>
+        <association javaType="com.ym.hygg.huyagg.pojo.Classify" property="classify">
+            <id property="classId" column="class_id"/>
+        </association>
+    </resultMap>
+    <select id="queryAll" parameterType="com.ym.hygg.huyagg.pojo.Commodity" resultMap="baseMap">
+        SELECT * FROM commodity WHERE audit != 0 and distinguish = #{distinguish}
+    </select>
+    <select id="getSelf" parameterType="Integer" resultMap="baseMap">
+        SELECT * FROM commodity WHERE user_id = #{uid} and distinguish = #{distinguish}
+    </select>
+    <select id="getOneById" resultMap="baseMap">
+        SELECT * FROM commodity WHERE com_id = #{id}
+    </select>
+    <select id="getSomeByType" resultMap="baseMap">
+        SELECT * FROM commodity WHERE class_id = classify
+    </select>
+    <insert id="save" parameterType="com.ym.hygg.huyagg.pojo.Commodity" useGeneratedKeys="true" keyProperty="comId" keyColumn="com_id">
+       INSERT INTO commodity(distinguish, name, pic_name, price, release_time, class_id, user_id)
+       VALUES (#{distinguish},#{name},#{picName},#{price},#{releaseTime},#{classify.classId},#{user.uid})
+    </insert>
+    <update id="update" parameterType="com.ym.hygg.huyagg.pojo.Commodity">
+        UPDATE commodity
+         <set>
+            <if test="audit != null"> audit = #{audit}, </if>
+             <if test="name != null"> name = #{name}, </if>
+              <if test="distinguish != null"> distinguish = #{distinguish},</if>
+             <if test="picName != null"> pic_name = #{picName}, </if>
+             <if test="price != null"> price = #{price}, </if>
+             <if test="releaseTime != null"> release_time = #{releaseTime},</if>
+             <if test="classify != null and classify.classId != null"> class_id = #{classify.classId}, </if>
+             <if test="user != null and user.uid != null"> user_id = #{user.uid} </if>
+        </set>
+        WHERE com_id = #{comId}
+    </update>
+    <delete id="delete">
+        DELETE FROM commodity WHERE com_id = #{id}
+    </delete>
+</mapper>

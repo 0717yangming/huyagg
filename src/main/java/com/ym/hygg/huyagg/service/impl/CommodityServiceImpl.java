@@ -18,22 +18,25 @@ public class CommodityServiceImpl implements CommodityService {
     @Resource
     private CommodityDao commodityDao;
     @Override
-    public List<Commodity> queryAllCommodity() {
+    public List<Commodity> queryAllCommodity(Integer distinguish) {
         //List<Commodity> commodities = commodityMapper.commodityWithAudited();
-        return commodityDao.queryAll();
+       //Integer distinguish = 1;
+        return commodityDao.queryAll(distinguish);
     }
 
     @Override
+    public List<Commodity> getSelf(Integer uid, Integer distinguish) {
+        return commodityDao.getSelf(uid, distinguish);
+    }
+    @Override
     public Integer save(Commodity commodity) {
-        if(commodity.getComId() != null){
-            String[] nullProperties = CommonUtils.getNullProperties(commodity);
-            Optional<Commodity> userOptional = Optional.ofNullable(commodityDao.getOneById(commodity.getComId()));
-            if(userOptional.isPresent()){
-                BeanUtils.copyProperties(commodity,userOptional.get(),nullProperties);
-                commodity = userOptional.get();
-            }
-        }
-        return commodityDao.save(commodity);
+        commodityDao.save(commodity);
+        return commodity.getComId();
+    }
+
+    @Override
+    public Integer update(Commodity commodity) {
+        return commodityDao.update(commodity);
     }
 
     @Override

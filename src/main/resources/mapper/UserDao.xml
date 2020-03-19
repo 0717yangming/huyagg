@@ -23,8 +23,8 @@
     </select>
     <insert id="save" useGeneratedKeys="true" keyProperty="uid" keyColumn="uid" parameterType="com.ym.hygg.huyagg.pojo.User">
         INSERT INTO
-        user(academy, actual_name, banji, create_time, domitory, email, major, password, phone, sex, username)
-        VALUES (#{academy},#{actualName},#{banji},#{createTime},#{domitory},#{email},#{major},#{password},#{phone},#{sex},#{username});
+        user(academy, actual_name, banji, create_time, domitory, email, major, password, phone, role, sex, username)
+        VALUES (#{academy},#{actualName},#{banji},#{createTime},#{domitory},#{email},#{major},#{password},#{phone}, #{role}, #{sex},#{username});
     </insert>
     <update id="update" parameterType="com.ym.hygg.huyagg.pojo.User">
         UPDATE user

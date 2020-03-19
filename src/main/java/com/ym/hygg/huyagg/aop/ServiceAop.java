@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class CommodityAop {
+public class ServiceAop {
     @Pointcut("execution(* com.ym.hygg.huyagg.service.*.*(..))")
     private void pointcutService(){}
     @Pointcut("execution(* com.ym.hygg.huyagg.controller.*.*(..))")

@@ -23,6 +23,11 @@ public class ClassifyServiceImpl implements ClassifyService {
     }
 
     @Override
+    public Integer update(Classify classify) {
+        return null;
+    }
+
+    @Override
     public List<Classify> AllClassifies() {
         return classifyDao.findAll();
     }

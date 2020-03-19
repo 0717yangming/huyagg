@@ -18,4 +18,8 @@ public class ResponseObject {
      * 拒绝访问
      */
     public static final Integer Reject = 401;
+    public ResponseObject(Integer code, String msg){
+        this.code = code;
+        this.msg = msg;
+    }
 }

@@ -56,26 +56,26 @@ public class UserController {
      * @return ResponseObject
      */
     @Transactional
-    @GetMapping("/login")
-    public ResponseObject login(@Param("username") String username, @Param("password") String password){
-        log.info(username+"：用户试图登陆");
+    @PostMapping("/login")
+    public ResponseObject login(@RequestBody User user){
+        log.info(user.getUsername()+"：用户试图登陆");
         ResponseObject ro = new ResponseObject();
-        Optional<User> user = userService.getOneByUsername(username);
-        if(!user.isPresent())
+        Optional<User> userOptional = userService.getOneByUsername(user.getUsername());
+        if(!userOptional.isPresent())
         {
-            log.info(username+"：登录失败");
+            log.info(user.getUsername()+"：登录失败");
             ro.setMsg("用户名不存在！");
             ro.setCode(ResponseObject.Fail);
            return ro;
         }
-        if (!(user.get().getPassword().equals(password))){
-            log.info(username+"：登录失败");
+        if (!(userOptional.get().getPassword().equals(user.getPassword()))){
+            log.info(user.getUsername()+"：登录失败");
             ro.setMsg("密码错误！");
             ro.setCode(ResponseObject.Fail);
             return ro;
         }
-        ro.setObject(user.get());
-        String token = tokenService.getToken(user.get());
+        ro.setObject(userOptional.get());
+        String token = tokenService.getToken(userOptional.get());
         ro.setToken(token);
         ro.setCode(ResponseObject.SUCCESS);
         ro.setMsg("登录成功！");

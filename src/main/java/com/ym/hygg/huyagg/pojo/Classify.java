@@ -37,6 +37,6 @@ public class Classify {
     @Column(name = "image_path", columnDefinition = "varchar(32) default 'sale.jpg'")
     private String imagePath;
 
-    @OneToMany(mappedBy = "classId")
+    @OneToMany(mappedBy = "classify")
     private Set<Commodity> commodity;
 }
